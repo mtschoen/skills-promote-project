@@ -11,7 +11,7 @@ Turn a bare idea folder (or a brand-new project) into a real, convention-complia
 
 - `~/.claude/project-conventions.md` - the checklist + the `.editorconfig` template.
 - `project-maintenance`'s `references/cross-project-config.md` - the **literal shapes** to paste (on-save hook JSON, CI skeleton, `aislop` config, `AGENTS.md`-pointer form).
-- `~/.claude/notes/idioms_linters.md` - **per-language tool selection, the pinned `aislop` version, and gotchas** (e.g. the Python "→ 100" playbook).
+- The aislop section of the user's global `CLAUDE.md` - **the pinned `aislop` version and hook-install rules**.
 
 This skill *applies* those; it carries no copies that would rot.
 
@@ -50,15 +50,15 @@ Create from `~/.claude/project-conventions.md`'s base checklist:
 
 ### Tier 2 - stack-aware (after the stack is fixed)
 
-Apply the literal shapes from `cross-project-config.md`, with tool selection + gotchas from `idioms_linters.md`, tailored to the decided stack:
+Apply the literal shapes from `cross-project-config.md`, tailored to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
 
 1. **Fill `AGENTS.md`** as the single source of truth: build/test commands, architecture, conventions. Keep only genuinely tool-specific content (Claude Code hooks/settings paths, the `Skill` tool, subagent routing) *below* the `@AGENTS.md` line in `CLAUDE.md`.
 2. **Language manifest** (e.g. `pyproject.toml`) with the test runner + a coverage gate. The personal-fleet coverage bar is **`fail_under = 100`** (llamalab/project-tracker) - not a softer number. (This pytest line-coverage gate is distinct from the `aislop` *score* gate in step 4.)
-3. **Linter config** for the stack + a `PostToolUse` on-save lint hook in `.claude/settings.json` (copy the canonical hook from `cross-project-config.md`; tailor the `case` arms to the repo's languages). **Hand-write the hook - do NOT run `aislop hook install`** (even `--project` rewrites `CLAUDE.md` + drops an `AISLOP.md`). **Pin the `aislop` version** in the hook (never `@latest` - it network-checks every edit); get the current pinned version from `idioms_linters.md` / the aislop section of the global `CLAUDE.md`.
+3. **Linter config** for the stack + a `PostToolUse` on-save lint hook in `.claude/settings.json` (copy the canonical hook from `cross-project-config.md`; tailor the `case` arms to the repo's languages). **Hand-write the hook - do NOT run `aislop hook install`** (even `--project` rewrites `CLAUDE.md` + drops an `AISLOP.md`). **Pin the `aislop` version** in the hook (never `@latest` - it network-checks every edit); get the current pinned version from the aislop section of the global `CLAUDE.md`.
 4. **`aislop` gate** (`.aislop/config.yml`) - `ci.failBelow` per `cross-project-config.md` (reference: 80). Disable `python-formatting`/`python-linting` (ruff owns those); note the `from __future__ import annotations` false positive. Pin the version.
 5. **CI** (`.gitea/workflows/` primary; `.github/workflows/` for a mirror) running lint + format-check + tests. Don't skip it.
 6. **`LICENSE`** (MIT default).
-7. Stack-specific must-haves `idioms_linters.md` calls out - e.g. Python: a `requirements.txt` mirroring deps (with a one-line note that `pyproject.toml` is the install source of truth), so `aislop`'s security engine can audit them.
+7. Stack-specific must-haves - e.g. Python: a `requirements.txt` mirroring deps (with a one-line note that `pyproject.toml` is the install source of truth), so `aislop`'s security engine can audit them.
 
 ### Remotes + registration
 
