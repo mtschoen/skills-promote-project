@@ -1,6 +1,6 @@
 ---
 name: promote-project
-description: Use when a brainstorm has fixed a project's tech stack and the user wants to start real work - "promote this to a real project", "scaffold this", "set up the bells and whistles", "make this a real repo", "wire up the linters and hooks". Also when adopting an already-created bare folder (e.g. from capture-idea) into a compliant git repo. Requires the project-tracker MCP server for registration.
+description: Use when a brainstorm has fixed a project's tech stack and the user wants to start real work - "promote this to a real project", "scaffold this", "set up the bells and whistles", "make this a real repo", "wire up the linters and hooks". Also when adopting an already-created bare folder (e.g. from capture-idea) into a compliant git repo. Registers with the project-tracker MCP server when available; otherwise records the project in ~/.project-tracker/projects.json.
 ---
 
 # promote-project
@@ -68,6 +68,7 @@ Apply the literal shapes from `cross-project-config.md`, tailored to the decided
   - Fresh empty project → project-tracker MCP `create_project`.
   - **Adopting an existing folder** (the common capture-idea case - `create_project` refuses existing folders) → project-tracker MCP **`register_existing_path`** (params: `path`, optional `name`/`description`/`status`). Fallback if that tool is absent: the CLI `project-tracker project register <path>`. Do NOT call `create_project` on an existing folder - it raises `FileExistsError`.
   - Verify it registered (`list_projects`/`get_project`) - don't assume `project-tracker scan` will find it (the CLI scan ignores `manual_include` paths).
+  - **If neither the MCP server nor the CLI is available**, append `{name, path, status, description}` to `~/.project-tracker/projects.json` (create the file with `[]` if missing) and verify by reading it back.
 
 ## Adopting an existing folder
 
@@ -81,7 +82,7 @@ The baseline failure mode is an ad-hoc scaffold with internal inconsistencies. B
 - [ ] **No empty tracked-intent dirs** - git ignores empty dirs; commit a stub (e.g. `templates/base.html`) or omit the dir.
 - [ ] **`CLAUDE.md` is a `@AGENTS.md` pointer**, not duplicated full content; `AGENTS.md` exists and is filled.
 - [ ] **Stack must-haves present** (e.g. Python `requirements.txt`).
-- [ ] **Registered in project-tracker** (verify it appears, don't assume).
+- [ ] **Registered in project-tracker** — MCP/CLI, or the JSON registry in fallback mode (verify it appears, don't assume).
 - [ ] **Lint/test gate runs clean** - actually run the linter + tests once. If you genuinely can't execute locally (restricted sandbox), say so explicitly to the user and confirm CI will catch it on first push - don't silently claim it passes.
 - [ ] **Any deviation from the conventions was surfaced to the user**, not made silently.
 
