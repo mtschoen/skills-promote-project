@@ -1,6 +1,6 @@
 ---
 name: promote-project
-description: Use when a brainstorm has fixed a project's tech stack and the user wants to start real work - "promote this to a real project", "scaffold this", "set up the bells and whistles", "make this a real repo", "wire up the linters and hooks". Also when adopting an already-created bare folder (e.g. from capture-idea) into a compliant git repo. Requires the project-tracker MCP server for registration.
+description: Use when a brainstorm has fixed a project's tech stack and the user wants to start real work - "promote this to a real project", "scaffold this", "set up the bells and whistles", "make this a real repo", "wire up the linters and hooks". Also when adopting an already-created bare folder (e.g. from capture-idea) into a compliant git repo. Registers with the project-tracker MCP server when available; otherwise records the project in ~/.project-tracker/projects.json.
 ---
 
 # promote-project
@@ -53,7 +53,7 @@ Create from `~/.claude/project-conventions.md`'s base checklist:
 Apply the literal shapes from `cross-project-config.md`, tailored to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
 
 1. **Fill `AGENTS.md`** as the single source of truth: build/test commands, architecture, conventions. Keep only genuinely tool-specific content (Claude Code hooks/settings paths, the `Skill` tool, subagent routing) *below* the `@AGENTS.md` line in `CLAUDE.md`.
-2. **Language manifest** (e.g. `pyproject.toml`) with the test runner + a coverage gate. The personal-fleet coverage bar is **`fail_under = 100`** (llamalab/project-tracker) - not a softer number. (This pytest line-coverage gate is distinct from the `aislop` *score* gate in step 4.)
+2. **Language manifest** (e.g. `pyproject.toml`) with the test runner + a coverage gate. The coverage bar is **`fail_under = 100`** - not a softer number. (This pytest line-coverage gate is distinct from the `aislop` *score* gate in step 4.)
 3. **Linter config** for the stack + a `PostToolUse` on-save lint hook in `.claude/settings.json` (copy the canonical hook from `cross-project-config.md`; tailor the `case` arms to the repo's languages). **Hand-write the hook - do NOT run `aislop hook install`** (even `--project` rewrites `CLAUDE.md` + drops an `AISLOP.md`). **Pin the `aislop` version** in the hook (never `@latest` - it network-checks every edit); get the current pinned version from the aislop section of the global `CLAUDE.md`.
 4. **`aislop` gate** (`.aislop/config.yml`) - `ci.failBelow` per `cross-project-config.md` (reference: 80). Disable `python-formatting`/`python-linting` (ruff owns those); note the `from __future__ import annotations` false positive. Pin the version.
 5. **CI** (`.github/workflows/` or `.gitea/workflows/` depending on hosting) running lint + format-check + tests. Don't skip it.
@@ -67,6 +67,7 @@ Apply the literal shapes from `cross-project-config.md`, tailored to the decided
   - Fresh empty project → project-tracker MCP `create_project`.
   - **Adopting an existing folder** (the common capture-idea case - `create_project` refuses existing folders) → project-tracker MCP **`register_existing_path`** (params: `path`, optional `name`/`description`/`status`). Fallback if that tool is absent: the CLI `project-tracker project register <path>`. Do NOT call `create_project` on an existing folder - it raises `FileExistsError`.
   - Verify it registered (`list_projects`/`get_project`) - don't assume `project-tracker scan` will find it (the CLI scan ignores `manual_include` paths).
+  - **If neither the MCP server nor the CLI is available**, append `{name, path, status, description}` to `~/.project-tracker/projects.json` (create the file with `[]` if missing) and verify by reading it back.
 
 ## Adopting an existing folder
 
@@ -80,7 +81,7 @@ The baseline failure mode is an ad-hoc scaffold with internal inconsistencies. B
 - [ ] **No empty tracked-intent dirs** - git ignores empty dirs; commit a stub (e.g. `templates/base.html`) or omit the dir.
 - [ ] **`CLAUDE.md` is a `@AGENTS.md` pointer**, not duplicated full content; `AGENTS.md` exists and is filled.
 - [ ] **Stack must-haves present** (e.g. Python `requirements.txt`).
-- [ ] **Registered in project-tracker** (verify it appears, don't assume).
+- [ ] **Registered in project-tracker** — MCP/CLI, or the JSON registry in fallback mode (verify it appears, don't assume).
 - [ ] **Lint/test gate runs clean** - actually run the linter + tests once. If you genuinely can't execute locally (restricted sandbox), say so explicitly to the user and confirm CI will catch it on first push - don't silently claim it passes.
 - [ ] **Any deviation from the conventions was surfaced to the user**, not made silently.
 
