@@ -5,15 +5,15 @@ description: Use when a brainstorm has fixed a project's tech stack and the user
 
 # promote-project
 
-Turn a bare idea folder (or a brand-new project) into a real, convention-compliant git repo: history, base config, stack-aware linters + on-save hooks, an `aislop` gate, `AGENTS.md`, a language manifest, CI, remote hosting, and a project-tracker registration.
+Turn a bare idea folder (or a brand-new project) into a real, convention-compliant git repo: history, base config, stack-aware linters + on-save hooks, an `aislop` (https://github.com/scanaislop/aislop/) gate - the lint/gate stack used across the fleet, `AGENTS.md`, a language manifest, CI, remote hosting, and a project-tracker registration.
 
 **Core principle: reference the shared definition, don't reinvent it.** What a compliant project contains is defined once and consumed by both *birth* (this skill) and *upkeep* (`project-maintenance`):
 
-- `~/.claude/project-conventions.md` - the checklist + the `.editorconfig` template.
+- `~/.claude/project-conventions.md` - if the user maintains this personal dotfile, it's the checklist + the `.editorconfig` template. If it doesn't exist, fall back to the checklist and defaults already spelled out inline in this skill's Tier 1 / Tier 2 steps below - same procedure, just not centralized in a personal file.
 - `project-maintenance`'s `references/cross-project-config.md` - the **literal shapes** to paste (on-save hook JSON, CI skeleton, `aislop` config, `AGENTS.md`-pointer form).
 - The aislop section of the user's global `CLAUDE.md` - **the pinned `aislop` version and hook-install rules**.
 
-This skill *applies* those; it carries no copies that would rot.
+This skill *applies* those when present; it carries no copies that would rot, and falls back to the defaults described inline here when a referenced file isn't available.
 
 ## When this fires
 
@@ -50,7 +50,7 @@ Create from `~/.claude/project-conventions.md`'s base checklist:
 
 ### Tier 2 - stack-aware (after the stack is fixed)
 
-Apply the literal shapes from `cross-project-config.md`, tailored to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
+If the `project-maintenance` skill is installed, apply the literal shapes from its `references/cross-project-config.md`; otherwise apply the essence directly: a bare `@AGENTS.md` import pointer in `CLAUDE.md`/`GEMINI.md`, a `PostToolUse` ruff/shellcheck on-save lint hook in `.claude/settings.json`, a minimal lint + format-check + test CI workflow, and an `aislop` gate config (`.aislop/config.yml`) with `ci.failBelow: 80`. Either way, tailor to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
 
 1. **Fill `AGENTS.md`** as the single source of truth: build/test commands, architecture, conventions. Keep only genuinely tool-specific content (Claude Code hooks/settings paths, the `Skill` tool, subagent routing) *below* the `@AGENTS.md` line in `CLAUDE.md`.
 2. **Language manifest** (e.g. `pyproject.toml`) with the test runner + a coverage gate. The coverage bar is **`fail_under = 100`** - not a softer number. (This pytest line-coverage gate is distinct from the `aislop` *score* gate in step 4.)
