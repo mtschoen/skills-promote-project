@@ -5,12 +5,12 @@ description: Use when a brainstorm has fixed a project's tech stack and the user
 
 # promote-project
 
-Turn a bare idea folder (or a brand-new project) into a real, convention-compliant git repo: history, base config, stack-aware linters + on-save hooks, an `aislop` (https://github.com/scanaislop/aislop/) gate - the lint/gate stack used across the fleet, `AGENTS.md`, a language manifest, CI, remote hosting, and a project-tracker registration.
+Turn a bare idea folder (or a brand-new project) into a real, convention-compliant git repo: history, base config, stack-aware linters + on-save hooks, an [`aislop`](https://github.com/scanaislop/aislop/) gate - the recommended lint/gate stack, `AGENTS.md`, a language manifest, CI, remote hosting, and a project-tracker registration.
 
 **Core principle: reference the shared definition, don't reinvent it.** What a compliant project contains is defined once and consumed by both *birth* (this skill) and *upkeep* (`project-maintenance`):
 
-- `~/.claude/project-conventions.md` - if the user maintains this personal dotfile, it's the checklist + the `.editorconfig` template. If it doesn't exist, fall back to the checklist and defaults already spelled out inline in this skill's Tier 1 / Tier 2 steps below - same procedure, just not centralized in a personal file.
-- `project-maintenance`'s `references/cross-project-config.md` - the **literal shapes** to paste (on-save hook JSON, CI skeleton, `aislop` config, `AGENTS.md`-pointer form).
+- `~/.agents/project-conventions.md` - if the user maintains this personal dotfile, it's the checklist + the `.editorconfig` template. If it doesn't exist, fall back to the checklist and defaults already spelled out inline in this skill's Tier 1 / Tier 2 steps below - same procedure, just not centralized in a personal file.
+- If the `project-maintenance` skill is installed, its `references/cross-project-config.md` - the **literal shapes** to paste (on-save hook JSON, CI skeleton, `aislop` config, `AGENTS.md`-pointer form). If that skill isn't installed, apply the essence directly as described inline in Tier 2 below - same procedure, just not centralized in a shared reference.
 - The aislop section of the user's global `CLAUDE.md` - **the pinned `aislop` version and hook-install rules**.
 
 This skill *applies* those when present; it carries no copies that would rot, and falls back to the defaults described inline here when a referenced file isn't available.
@@ -37,7 +37,7 @@ After a brainstorm has decided the stack and the user wants to start coding:
 
 ### Tier 1 - deterministic base (language-agnostic)
 
-Create from `~/.claude/project-conventions.md`'s base checklist:
+Create from `~/.agents/project-conventions.md`'s base checklist:
 
 1. `git init` (default branch `main`) - unless adopting a folder that's already a repo.
 2. `.editorconfig` (from the conventions template), `.gitattributes` (`* text=auto`), `.gitignore` for the stack.
@@ -81,7 +81,7 @@ The baseline failure mode is an ad-hoc scaffold with internal inconsistencies. B
 - [ ] **No empty tracked-intent dirs** - git ignores empty dirs; commit a stub (e.g. `templates/base.html`) or omit the dir.
 - [ ] **`CLAUDE.md` is a `@AGENTS.md` pointer**, not duplicated full content; `AGENTS.md` exists and is filled.
 - [ ] **Stack must-haves present** (e.g. Python `requirements.txt`).
-- [ ] **Registered in project-tracker** — MCP/CLI, or the JSON registry in fallback mode (verify it appears, don't assume).
+- [ ] **Registered in project-tracker** - MCP/CLI, or the JSON registry in fallback mode (verify it appears, don't assume).
 - [ ] **Lint/test gate runs clean** - actually run the linter + tests once. If you genuinely can't execute locally (restricted sandbox), say so explicitly to the user and confirm CI will catch it on first push - don't silently claim it passes.
 - [ ] **Any deviation from the conventions was surfaced to the user**, not made silently.
 
