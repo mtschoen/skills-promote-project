@@ -1,6 +1,6 @@
 # promote-project
 
-An agent skill that turns a bare idea folder (or a brand-new project) into a real git project - git history, base config files, stack-aware linters and on-save hooks, an `aislop` quality gate, `AGENTS.md`, a language manifest, a LICENSE, CI, and remote hosting on Gitea + GitHub - then registers it in project-tracker.
+A skill that turns a bare idea folder (or a brand-new project) into a real git project - git history, base config files, stack-aware linters and on-save hooks, an `aislop` quality gate, `AGENTS.md`, a language manifest, a LICENSE, CI, and remote hosting on Gitea + GitHub - then registers it in project-tracker.
 
 ## When it fires
 
