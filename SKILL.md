@@ -11,7 +11,7 @@ Turn a bare idea folder (or a brand-new project) into a real, convention-complia
 
 - `~/.agents/project-conventions.md` - if the user maintains this personal dotfile, it's the checklist + the `.editorconfig` template. If it doesn't exist, fall back to the checklist and defaults already spelled out inline in this skill's Tier 1 / Tier 2 steps below - same procedure, just not centralized in a personal file.
 - If the `project-maintenance` skill is installed, its `references/cross-project-config.md` - the **literal shapes** to paste (on-save hook JSON, CI skeleton, `aislop` config, `AGENTS.md`-pointer form). If that skill isn't installed, apply the essence directly as described inline in Tier 2 below - same procedure, just not centralized in a shared reference.
-- The aislop section of the user's global `CLAUDE.md` - **the pinned `aislop` version and hook-install rules**.
+- The aislop section of the user's global `AGENTS.md` (or `CLAUDE.md` for Claude Code) - **the pinned `aislop` version and hook-install rules**.
 
 This skill *applies* those when present; it carries no copies that would rot, and falls back to the defaults described inline here when a referenced file isn't available.
 
@@ -50,11 +50,11 @@ Create from `~/.agents/project-conventions.md`'s base checklist:
 
 ### Tier 2 - stack-aware (after the stack is fixed)
 
-If the `project-maintenance` skill is installed, apply the literal shapes from its `references/cross-project-config.md`; otherwise apply the essence directly: a bare `@AGENTS.md` import pointer in `CLAUDE.md`/`GEMINI.md`, a `PostToolUse` ruff/shellcheck on-save lint hook in `.claude/settings.json`, a minimal lint + format-check + test CI workflow, and an `aislop` gate config (`.aislop/config.yml`) with `ci.failBelow: 80`. Either way, tailor to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
+If the `project-maintenance` skill is installed, apply the literal shapes from its `references/cross-project-config.md`; otherwise apply the essence directly: a bare `@AGENTS.md` import pointer in `CLAUDE.md`/`GEMINI.md`, a `PostToolUse` ruff/shellcheck on-save lint hook in `.claude/settings.json` (Claude Code's hook config - adapt to your harness's equivalent mechanism), a minimal lint + format-check + test CI workflow, and an `aislop` gate config (`.aislop/config.yml`) with `ci.failBelow: 80`. Either way, tailor to the decided stack, using the stack's standard tools (Python: ruff; JS/TS: eslint + prettier; shell: shellcheck):
 
 1. **Fill `AGENTS.md`** as the single source of truth: build/test commands, architecture, conventions. Keep only genuinely tool-specific content (Claude Code hooks/settings paths, the `Skill` tool, subagent routing) *below* the `@AGENTS.md` line in `CLAUDE.md`.
 2. **Language manifest** (e.g. `pyproject.toml`) with the test runner + a coverage gate. The coverage bar is **`fail_under = 100`** - not a softer number. (This pytest line-coverage gate is distinct from the `aislop` *score* gate in step 4.)
-3. **Linter config** for the stack + a `PostToolUse` on-save lint hook in `.claude/settings.json` (copy the canonical hook from `cross-project-config.md`; tailor the `case` arms to the repo's languages). **Hand-write the hook - do NOT run `aislop hook install`** (even `--project` rewrites `CLAUDE.md` + drops an `AISLOP.md`). **Pin the `aislop` version** in the hook (never `@latest` - it network-checks every edit); get the current pinned version from the aislop section of the global `CLAUDE.md`.
+3. **Linter config** for the stack + a `PostToolUse` on-save lint hook in `.claude/settings.json` (copy the canonical hook from `cross-project-config.md`; tailor the `case` arms to the repo's languages). **Hand-write the hook - do NOT run `aislop hook install`** (even `--project` rewrites `CLAUDE.md` + drops an `AISLOP.md`). **Pin the `aislop` version** in the hook (never `@latest` - it network-checks every edit); get the current pinned version from the aislop section of the global `AGENTS.md` (or `CLAUDE.md` for Claude Code).
 4. **`aislop` gate** (`.aislop/config.yml`) - `ci.failBelow` per `cross-project-config.md` (reference: 80). Disable `python-formatting`/`python-linting` (ruff owns those); note the `from __future__ import annotations` false positive. Pin the version.
 5. **CI** (`.github/workflows/` or `.gitea/workflows/` depending on hosting) running lint + format-check + tests. Don't skip it.
 6. **`LICENSE`** (MIT default).
