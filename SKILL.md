@@ -67,7 +67,7 @@ If the `project-maintenance` skill is installed, apply the literal shapes from i
   - Fresh empty project → project-tracker MCP `create_project`.
   - **Adopting an existing folder** (the common capture-idea case - `create_project` refuses existing folders) → project-tracker MCP **`register_existing_path`** (params: `path`, optional `name`/`description`/`status`). Fallback if that tool is absent: the CLI `project-tracker project register <path>`. Do NOT call `create_project` on an existing folder - it raises `FileExistsError`.
   - Verify it registered (`list_projects`/`get_project`) - don't assume `project-tracker scan` will find it (the CLI scan ignores `manual_include` paths).
-  - **If neither the MCP server nor the CLI is available**, append `{name, path, status, description}` to `~/.project-tracker/projects.json` (create the file with `[]` if missing) and verify by reading it back.
+  - **If neither the MCP server nor the CLI is available**, append `{name, path, status, description}` to `~/.project-tracker/projects.json` (create the file with `[]` if missing) and verify by reading it back. The registry is an *agent-maintained* convention for installs without project-tracker - the agent owns the file; the project-tracker tool never reads it (its own store is a SQLite database under `~/.project_tracker/`, note the underscore). Entries promote into the real tracker later with `project-tracker project register <path>`.
 
 ## Adopting an existing folder
 
