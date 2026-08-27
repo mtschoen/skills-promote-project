@@ -1,3 +1,12 @@
+> [!NOTE]
+> **This repository has moved.** Its content, history, and issues now live in
+> [schoen-lab](https://github.com/mtschoen/schoen-lab) under
+> `packages/project_tracker/skills/promote-project/`, because it ships alongside the tool it depends on: a skill
+> whose value collapses without a specific tool belongs with that tool, not
+> in a set that advertises itself as portable.
+> See [skills-dev#25](https://github.com/mtschoen/skills-dev) for the rationale.
+> This repository is archived and read-only.
+
 # promote-project
 
 A skill that turns a bare idea folder (or a brand-new project) into a real git project - git history, base config files, stack-aware linters and on-save hooks, an `aislop` quality gate, `AGENTS.md`, a language manifest, a LICENSE, CI, and remote hosting on Gitea + GitHub - then registers it in project-tracker.
